@@ -58,3 +58,5 @@ let case = "case"
 let case_set = "case_set"
 let case_prefix = "case_"
 
+let js_fn_run = "js_fn_run"
+let js_method_run = "js_method_run"

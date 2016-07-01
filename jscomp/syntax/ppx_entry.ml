@@ -66,12 +66,14 @@ let obj_type_as_js_obj_type = ref false
 let uncurry_type = ref false 
 let obj_type_auto_uncurry =  ref false
 let non_export = ref false 
+let bs_class_type = ref false 
 
 let reset () = 
   record_as_js_object := None ;
   obj_type_as_js_obj_type := false ;
   uncurry_type := false ;
   obj_type_auto_uncurry := false ;
+  bs_class_type := false;
   non_export  :=  false
 
 
@@ -337,6 +339,10 @@ let common_actions_table :
   [ "obj_type_auto_uncurry", 
     (fun e -> 
        obj_type_auto_uncurry := Ast_payload.assert_bool_lit e
+    ); 
+    "bs_class_type", 
+    (fun e -> 
+       bs_class_type := Ast_payload.assert_bool_lit e 
     )
   ]
 

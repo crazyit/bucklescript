@@ -35,8 +35,19 @@ let curry_type_id () =
   else 
     Ast_literal.Lid.js_fn
 
-let mk_args ~loc n tys = 
+let method_id () = 
+  if Js_config.get_env () = Browser then 
+     Ast_literal.Lid.pervasives_meth
+  else 
+    Ast_literal.Lid.js_meth
 
+let meth_call_back_id () = 
+  if Js_config.get_env () = Browser then 
+    Ast_literal.Lid.pervasives_meth_callback
+  else 
+    Ast_literal.Lid.js_meth_callback
+
+let mk_args ~loc n tys = 
   Typ.variant ~loc 
     [ Rtag ("Args_" ^ string_of_int n, [], (tys = []),  tys)] Closed None
 
@@ -50,14 +61,19 @@ let lift_curry_type  ~loc args result  =
   in 
   Typ.constr ~loc {txt = curry_type_id (); loc} xs
 
+let lift_method_type  ~loc args result  = 
+  let xs =
+    match args with 
+    | [ ] -> [mk_args 0  ~loc [] ; result ]
+    | [ x ] -> [ mk_args ~loc 1 [x] ; result ] 
+    | _ -> 
+      [mk_args ~loc (List.length args ) [Typ.tuple ~loc args] ; result ]
+  in 
+  Typ.constr ~loc {txt = method_id (); loc} xs
+
 let lift_js_type ~loc  x  = 
   Typ.constr ~loc {txt = js_obj_type_id (); loc} [x]
 
-let meth_type_id () = 
-  if Js_config.get_env () = Browser then 
-    Ast_literal.Lid.pervasives_meth_callback
-  else 
-    Ast_literal.Lid.js_meth_callback
 
 
 let arrow = Typ.arrow
@@ -65,7 +81,7 @@ let arrow = Typ.arrow
 
 
 let lift_js_meth_callback ~loc (obj,meth) 
-  = Typ.constr ~loc {txt = meth_type_id () ; loc} [obj; meth]
+  = Typ.constr ~loc {txt = meth_call_back_id () ; loc} [obj; meth]
 
 let down_with_name ~loc obj name =
   let downgrade ~loc () = 
@@ -80,10 +96,18 @@ let down_with_name ~loc obj name =
     (fun down -> Exp.send ~loc (Exp.apply ~loc down ["", obj]) name  )
 
 let gen_fn_run loc arity fn args  : Parsetree.expression_desc = 
-  let pval_prim = ["js_fn_run" ; string_of_int arity]  in
+  let pval_prim = [Literals.js_fn_run ; string_of_int arity]  in
   let fn_type, args_type, result_type = Ast_comb.tuple_type_pair ~loc `Run arity  in 
   let pval_type =
     arrow ~loc "" (lift_curry_type ~loc args_type result_type) fn_type in 
+  Ast_comb.create_local_external loc ~pval_prim ~pval_type 
+    (("", fn) :: List.map (fun x -> "",x) args )
+
+let gen_method_run loc arity fn args  : Parsetree.expression_desc = 
+  let pval_prim = [Literals.js_method_run ; string_of_int arity]  in
+  let fn_type, args_type, result_type = Ast_comb.tuple_type_pair ~loc `Run arity  in 
+  let pval_type =
+    arrow ~loc "" (lift_method_type ~loc args_type result_type) fn_type in 
   Ast_comb.create_local_external loc ~pval_prim ~pval_type 
     (("", fn) :: List.map (fun x -> "",x) args )
 
@@ -134,13 +158,13 @@ let method_run loc (obj : Parsetree.expression)
   | [ {pexp_desc = Pexp_construct ({txt = Lident "()"}, None)}]
     -> 
     {e with pexp_desc = 
-              gen_fn_run loc 0
+              gen_method_run loc 0
                 (Exp.mk ~loc @@ down_with_name ~loc obj name)
                 []
     }
   | _ -> 
     {e with pexp_desc = 
-              gen_fn_run loc len 
+              gen_method_run loc len 
                 (Exp.mk ~loc @@ down_with_name ~loc obj name)
                 args
     }
