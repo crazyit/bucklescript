@@ -1,4 +1,6 @@
-[@@@bs.config {obj_type_auto_uncurry = true ; (* non_export = true *) } ]
+[@@@bs.config {obj_type_auto_uncurry = true ; (* non_export = true *) 
+bs_class_type = true
+} ]
 
 
 class type v = object [@fn]

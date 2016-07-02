@@ -252,8 +252,41 @@ let destruct_arrow loc (first_arg : Parsetree.core_type)
     -> 
     lift_curry_type ~loc (List.rev rev_extra_args) result 
 
+
+let destruct_arrow_as_meth_type loc (first_arg : Parsetree.core_type) 
+    (typ : Parsetree.core_type) (mapper : Ast_mapper.mapper) = 
+  let rec aux acc (typ : Parsetree.core_type) = 
+    (* in general, 
+       we should collect [typ] in [int -> typ] before transformation, 
+       however: when attributes [fn] and [meth_callback] found in typ, 
+       we should stop 
+    *)
+    match process_attributes_rev typ.ptyp_attributes with 
+    | _ , `Nothing -> 
+      begin match typ.ptyp_desc with 
+      | Ptyp_arrow (label, arg, body)
+        -> 
+        if label <> "" then
+          Location.raise_errorf ~loc:typ.ptyp_loc "label is not allowed";
+        aux (mapper.typ mapper arg :: acc) body 
+      | _ -> mapper.typ mapper typ, acc 
+      end
+    | _, _ -> mapper.typ mapper typ, acc  
+  in 
+  let first_arg = mapper.typ mapper first_arg in
+  let result, rev_extra_args = 
+    aux  [first_arg] typ in 
+
+  match rev_extra_args with 
+  | [{ptyp_desc = Ptyp_constr ({txt = Lident "unit"}, [])}]
+    ->
+    lift_method_type ~loc [] result 
+  | _
+    -> 
+    lift_method_type ~loc (List.rev rev_extra_args) result 
+
   
-let destruct_arrow_as_meth loc (first_arg : Parsetree.core_type) 
+let destruct_arrow_as_meth_callback_type loc (first_arg : Parsetree.core_type) 
     (typ : Parsetree.core_type) (mapper : Ast_mapper.mapper) = 
   let rec aux acc (typ : Parsetree.core_type) = 
     match process_attributes_rev typ.ptyp_attributes with 

@@ -68,7 +68,12 @@ val destruct_arrow :
   Parsetree.core_type ->
   Parsetree.core_type -> Ast_mapper.mapper -> Parsetree.core_type
 
-val destruct_arrow_as_meth : 
+val destruct_arrow_as_meth_type : 
+  Ast_helper.loc ->
+  Parsetree.core_type ->
+  Parsetree.core_type -> Ast_mapper.mapper -> Parsetree.core_type
+
+val destruct_arrow_as_meth_callback_type : 
   Ast_helper.loc ->
   Parsetree.core_type ->
   Parsetree.core_type -> Ast_mapper.mapper -> Parsetree.core_type
