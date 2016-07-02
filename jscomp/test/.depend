@@ -136,8 +136,6 @@ debug_keep_test.cmj :
 debug_keep_test.cmx :
 debugger_test.cmj : ../runtime/js.cmj
 debugger_test.cmx : ../runtime/js.cmx
-demo.cmj : ../runtime/js.cmj demo_binding.cmj
-demo.cmx : ../runtime/js.cmx demo_binding.cmx
 demo_binding.cmj : ../runtime/js.cmj
 demo_binding.cmx : ../runtime/js.cmx
 demo_int_map.cmj : ../stdlib/map.cmi demo_int_map.cmi
@@ -150,6 +148,8 @@ digest_test.cmx : ../stdlib/string.cmx ../stdlib/printf.cmx mt.cmx \
     ext_array.cmx ../stdlib/digest.cmx ../stdlib/array.cmx
 div_by_zero_test.cmj : mt.cmi ../stdlib/int64.cmi ../stdlib/int32.cmi
 div_by_zero_test.cmx : mt.cmx ../stdlib/int64.cmx ../stdlib/int32.cmx
+dom.cmj :
+dom.cmx :
 empty_obj.cmj :
 empty_obj.cmx :
 epsilon_test.cmj : mt.cmi
@@ -832,8 +832,6 @@ debug_keep_test.cmo :
 debug_keep_test.cmj :
 debugger_test.cmo : ../runtime/js.cmo
 debugger_test.cmj : ../runtime/js.cmj
-demo.cmo : ../runtime/js.cmo demo_binding.cmo
-demo.cmj : ../runtime/js.cmj demo_binding.cmj
 demo_binding.cmo : ../runtime/js.cmo
 demo_binding.cmj : ../runtime/js.cmj
 demo_int_map.cmo : ../stdlib/map.cmi demo_int_map.cmi
@@ -846,6 +844,8 @@ digest_test.cmj : ../stdlib/string.cmj ../stdlib/printf.cmj mt.cmj \
     ext_array.cmj ../stdlib/digest.cmj ../stdlib/array.cmj
 div_by_zero_test.cmo : mt.cmi ../stdlib/int64.cmi ../stdlib/int32.cmi
 div_by_zero_test.cmj : mt.cmj ../stdlib/int64.cmj ../stdlib/int32.cmj
+dom.cmo :
+dom.cmj :
 empty_obj.cmo :
 empty_obj.cmj :
 epsilon_test.cmo : mt.cmi

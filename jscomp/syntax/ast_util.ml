@@ -133,6 +133,35 @@ let fn_run loc fn args
      pexp_attributes 
     }
 
+let property_run loc (obj : Parsetree.expression) 
+    name (args : (string * Parsetree.expression) list ) e 
+    (mapper : Ast_mapper.mapper) : Parsetree.expression = 
+  let obj = mapper.expr mapper obj in
+  let args =
+    List.map (fun (label,e) ->
+        if label <> "" then
+          Location.raise_errorf ~loc "label is not allowed here"        ;
+        mapper.expr mapper e
+      ) args in
+  let len = List.length args in 
+  (* TODO: have a final checking for property arities 
+     [case], [case_set] and other setter       
+  *)
+  match args with 
+  | [ {pexp_desc = Pexp_construct ({txt = Lident "()"}, None)}]
+    -> 
+    {e with pexp_desc = 
+              gen_fn_run loc 0
+                (Exp.mk ~loc @@ down_with_name ~loc obj name)
+                []
+    }
+  | _ -> 
+    {e with pexp_desc = 
+              gen_fn_run loc len 
+                (Exp.mk ~loc @@ down_with_name ~loc obj name)
+                args
+    }
+
 let method_run loc (obj : Parsetree.expression) 
     name (args : (string * Parsetree.expression) list ) e 
     (mapper : Ast_mapper.mapper) : Parsetree.expression = 

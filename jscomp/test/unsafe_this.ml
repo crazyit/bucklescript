@@ -18,8 +18,8 @@ let u : 'self =
       length : int >       )
   ]
 
-let bark = u##bark 
-let u  = bark u 1 2 [@fn]
+
+let u  = u#@bark u 1 2 [@fn]
 
 
 (* let bark2  = fun [@bs.this] (this, x, y) -> Js.log (this##x,x+y)  *)

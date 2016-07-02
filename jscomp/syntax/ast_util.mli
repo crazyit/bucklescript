@@ -38,6 +38,14 @@ val method_run :
   (string * Parsetree.expression) list ->
   Parsetree.expression -> Ast_mapper.mapper -> Parsetree.expression
 
+val property_run : 
+  Ast_helper.loc ->
+  Parsetree.expression ->
+  string ->
+  (string * Parsetree.expression) list ->
+  Parsetree.expression -> Ast_mapper.mapper -> Parsetree.expression
+
+
 val process_attributes_rev : 
   Parsetree.attributes ->
   Parsetree.attributes * [ `Meth | `Nothing | `Uncurry ]

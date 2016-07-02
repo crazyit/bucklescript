@@ -275,6 +275,16 @@ let rec unsafe_mapper : Ast_mapper.mapper =
                _} ->  (* f##paint 1 2 *)
               Ast_util.method_run loc obj name args e self
             | {pexp_desc = 
+                 Pexp_apply (
+                   {pexp_desc = 
+                      Pexp_ident  {txt = Lident "#@"  ; loc} ; _},
+                   [("", obj) ;
+                    ("", {pexp_desc = Pexp_ident {txt = Lident name;_ } ; _} )
+                   ]);
+               _} ->  (* f##paint 1 2 *)
+              Ast_util.property_run loc obj name args e self
+
+            | {pexp_desc = 
                  Pexp_ident  {txt = Lident "##" ; loc} ; _} 
               -> 
               begin match args with 

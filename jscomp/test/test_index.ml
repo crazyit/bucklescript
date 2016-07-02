@@ -39,8 +39,8 @@ type x_obj =
 let f_ext 
     (x : x_obj)
  = 
-  let v = x ## cse_st in v 3 2 [@fn] ;
-  let cse = x ## cse in cse  3 [@fn]
+ x #@ cse_st  3 2;
+ x #@ cse  3
 
 
 type 'a h_obj = 
